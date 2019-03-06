@@ -19,6 +19,8 @@
 \usepackage{nameref}
 \usepackage{tabularx}
 
+\graphicspath{../}
+
 \usepackage{enumitem}
 \setlist[enumerate,1]{start=0} % only outer nesting level
 
@@ -174,7 +176,7 @@ So any code that conforms to this API can be added to the system as a service.
 Services can run in two different ways. The first mode is synchronously where the service runs to completion before returning any results to the user. All of the resources that the service requires to run the job can be released as it sends the response back
 The second approach is that a service can be run asynchronously where it starts its work and returns immediately. The job then continues and the user can send a message to periodically check whether the job has completed successfully or not. With this approach any required resources need to be accessible between different requests. Given that httpd can  run as a multi-threaded and/or multi-process system, any data that needs to be persistent, \textit{i.e.} stored between requests, has to be adaptable to any httpd runtime configuration.
 
-So the Grassroots system has an interface for interacting with asynchronous jobs which is a module called JobsManager which deals with sharing persistent data between requests. There are currently two implementations of this. The first is for Apache httpd web server in a module called the APRJobsManager, since it uses the Apache Portable Runtime (APR) libraries. The second instance uses the Grassroots MongoDB libraries to store the job details in a MongoDB database.
+So the Grassroots system has an interface for interacting with asynchronous jobs which is a module called JobsManager which deals with sharing persistent data between requests. There are currently two implementations of this. The first is for Apache httpd web server in a module called the APRJobsManager, since it uses the Apache Portable Runtime (APR) libraries. The second instance uses the Grassroots MongoDB libraries to store the job details in a MongoDB database.
 All of the needed data to be able to recreate and access the job between processes and/or threads is stored in this module.
 
 The available JSON keys for describing parameters are show in tables \ref{tab:parameter} and \ref{tab:parameter_types}.
@@ -424,22 +426,20 @@ No competing interests are disclosed.
 \header Attribute & Required & Description \\ 
 \row param & yes & The programmatic name of the parameter. 
 If the \textbf{name} attribute is not set, then this value will be used for displaying to the user. \\
-\row name & no & The user-friendly name of the parameter for displaying to a user. 
+\row so:name & no & The user-friendly name of the parameter for displaying to a user. 
 If this is not set, then the value for the \textbf{param} attribute key will be used. \\ 
 \row default\_value & no & The default value of the parameter. \\ 
 \row current\_value & yes & The current value of the parameter. \\ 
 \row grassroots\_type & yes & This can take one of the values in table  \ref{tab:parameter_types} \\
-\row grassroots\_type\_text & yes & This can take one of the values in table  \ref{tab:parameter_types} \\
 \row enum & no & If the Parameter can take only take one of set of restricted values, these can be specified as an array here.
 The elements in this array have two fields:
 \begin{itemize}
 \item value:  The programmatic value that the Parameter will be set to.
-\item description: The user-friendly name of the parameter for displaying to a user. If this is not set, then the value for the *value* will be used instead.
+\item so:description: The user-friendly name of the parameter for displaying to a user. If this is not set, then the text for the \textit {value} will be used instead.
 \end{itemize}
-An example of this is shown in Figure \ref{fig:parameter_enum} which indicates that the Parameter can take 1 of 3 possible values, "z",\textit{} "zip" or "gz", and the values to show 
+An example of this is shown in Figure \ref{fig:parameter_enum} which indicates that the Parameter can take 1 of 3 possible values, "z","zip" or "gz", and the values to show 
 to the user are "Use Raw", "Use Zip" and "Use GZip". \\
-\row level & no & A number used to determine whether to show a Parameter to a user. The system offers 3 levels of Parameter; beginner, intermediate and advanced, and the user can switch their view as appropriate to show/hide different parameters. \\
-\row level\_text & no & An alternative way of defining the levels available for a Parameter. The words "beginner", "intermediate" and "advanced" and "all" are available. \\
+\row level & no & A way of defining the levels available for a Parameter. The words "simple", "advanced" and "all" are available. \\
 \row group & no & A string to define a named collection of parameters can be grouped together in a client's user interface. \\
 \end{tabularx}
 \end{table}
@@ -497,9 +497,9 @@ to the user are "Use Raw", "Use Zip" and "Use GZip". \\
 {
 	"schema_version": 0.1,
 	"provider": {
-		"name": "Agris",
-		"description": "A service to search for academic articles.",
-		"uri": "http://agris.fao.org/agris-search/index.do"
+		"so:name": "Agris",
+		"so:description": "A service to search for academic articles.",
+		"so:url": "http://agris.fao.org/agris-search/index.do"
 	},
 	"services": {
 		"path": "Agris Search service",
@@ -509,7 +509,7 @@ to the user are "Use Raw", "Use Zip" and "Use GZip". \\
 		"operations": [{
 			"operation_id": "Agris Web Search service",
 			"summary": "An operation to obtain matching articles",
-			"description": "An operation to obtain matching articles from Agris",
+			"so:description": "An operation to obtain matching articles from Agris",
 			"about_uri": "http://agris.fao.org/agris-search/index.do",
 			"uri": "http://agris.fao.org/agris-search/searchIndex.do",
 			"method": "GET",
@@ -517,12 +517,12 @@ to the user are "Use Raw", "Use Zip" and "Use GZip". \\
 			"parameter_set": {
 				"parameters": [{
 					"param": "query",
-					"name": "Query",
+					"so:name": "Query",
 					"default_value": "",
 					"current_value": "",
 					"type": "string",
-					"grassroots_type": 11,
-					"description": "The search term"
+					"grassroots_type": "params:keyword",
+					"so:description": "The search term"
 				}]
 			}
 		}]
@@ -543,12 +543,11 @@ to the user are "Use Raw", "Use Zip" and "Use GZip". \\
 \centering
 \begin{lstlisting}[style=json]
 {
-"enum": 
-   [
-	{ "description": "Use Raw", "value": "z" },
-	{ "description": "Use Zip", "value": "zip" },
-	{ "description": "Use GZip", "value": "gz" }
-]
+  "enum": [
+    { "so:description": "Use Raw", "value": "z" },
+    { "so:description": "Use Zip", "value": "zip" },
+    { "so:description": "Use GZip", "value": "gz" }
+  ]
 }
 \end{lstlisting}
 \caption{\label{fig:parameter_enum}An example JSON fragment showing the list of valid values for a parameter.}

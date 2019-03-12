@@ -18,8 +18,7 @@
 \usepackage[dvipsnames]{xcolor}
 \usepackage{nameref}
 \usepackage{tabularx}
-
-\graphicspath{../}
+\usepackage{float}
 
 \usepackage{enumitem}
 \setlist[enumerate,1]{start=0} % only outer nesting level
@@ -72,7 +71,7 @@ UK.}
 Since the dawn of the internet, scientific analysis software has been able to be run as online services. These can range from tools such as BLAST\cite{Camacho:2008}, SwissDock\cite{Grosdidier2011SwissDock}.
 Historically, these would have been "single use" tools, providing access to one tool or package of tools in order to analyse some small datasets. Given the subsequent explosion of datasets and new tools to analyse them, many scientific services are now provided on high-powered web servers and many offer application programming interfaces (APIs) to allow them to be called programmatically rather than requiring human interaction.
 
-As an increasing number of online services become available and popular, the issue of how to share data between the services becomes prevalent. The data that they input and output can be in differing data formats and be difficult and time-consuming for a user to reconcile the results together. These are the primary issues that we are developing the Grassroots infrastructure to solve.
+As an increasing number of online services become available and popular, the issue of how to share data between the services becomes prevalent. The data that they input and output can be in differing data formats and be difficult and time-consuming for a user to reconcile the results together. Similarly  .These are the primary issues that we are developing the Grassroots infrastructure to solve.
 
 %(Might need a bit more intro as to why we need Grassroots - "The problem with many diverse/siloed data resources/analysis services is... Therefore we are developing Grassroots to ... "). 
 
@@ -263,7 +262,7 @@ Both of these searches are enhancements to iRODS that come specifically from the
 The JSON services currently available all connect to web-based search engines as described below:
 
 \begin{description}
-\item [Agris] AGRIS\cite{Agris} (International System for Agricultural Science and Technology) is publicly accessible database with access to bibliographic information for agricultural science and technology globally.
+\item [Agris] AGRIS\cite{Agris} (International System for Agricultural Science and Technology) is a publicly accessible database with access to bibliographic information for agricultural science and technology globally.
 \item [BASE] The Bielefeld Academic Search Engine\cite{Pieper2015} is a search engine for open access academic resources.
 \item [f1000] F1000Research\cite{f1000} is a publishing platform for open science with a focus on immediate publication of articles, posters and slides.
 \end{description}
@@ -345,7 +344,7 @@ Phenotype data view is represented by an interactive table using DataTable, each
 
 \begin{enumerate}
 % \item URL link to where the software can be downloaded from or used by a non-coder (AUTHOR TO PROVIDE; optional)
-\item Latest source code and software available from https://github.com/TGAC/grassroots-api
+\item Latest source code and software available from https://github.com/TGAC?q=grassroots
 % \item Link to source code as at time of publication ({\textit{F1000Research}} TO GENERATE)
 % \item Link to archived source code as at time of publication ({\textit{F1000Research}} TO GENERATE)
 \item License: Apache License Version 2.0 http://www.apache.org/licenses/LICENSE-2.0
@@ -355,7 +354,7 @@ Phenotype data view is represented by an interactive table using DataTable, each
 % In order to give appropriate credit to each author of an article, the individual
 % contributions of each author to the manuscript should be detailed in this section. We
 % recommend using author initials and then stating briefly how they contributed.
-ST wrote the C/C++ code for the httpd server implementation and the Qt-based client.
+ST wrote the C/C++ code for the core libraries, httpd server implementation, services /and the Qt-based client.
 PW set up the SNP and contig services at the University of Bristol.
 XB wrote the Java/javascript code for the web-based client front-ends.
 ST, PW, XB and RD all contributed to defining the JSON schema used for all server-server and server-client communication.
@@ -418,8 +417,9 @@ No competing interests are disclosed.
 % \end{tabledata}
 % \end{table}
 
+\subsection*{Tables}
 
-\begin{table}[h!]
+\begin{table}[H]
 \hrule \vspace{0.1cm}
 \caption{\label{tab:parameter}The attributes used for describing parameters.}
 \centering
@@ -445,9 +445,7 @@ to the user are "Use Raw", "Use Zip" and "Use GZip". \\
 \end{tabularx}
 \end{table}
 
-
-
-\begin{table}[h!]
+\begin{table}[H]
 \hrule \vspace{0.1cm}
 \caption{\label{tab:parameter_types}The available types for parameters.}
 \centering
@@ -474,10 +472,6 @@ to the user are "Use Raw", "Use Zip" and "Use GZip". \\
 \end{table}
 
 
-\subsection*{Figures}
-
-
-
 % You can upload a figure (JPEG, PNG or PDF) using the files menu. To include it in your document, use the includegraphics command (see the example below in the source code).
 
 % Please give figures appropriate filenames eg: figure1.pdf, figure2.png.
@@ -486,9 +480,11 @@ to the user are "Use Raw", "Use Zip" and "Use GZip". \\
 
 % For any figures reproduced from another publication (as long as appropriate permission has been obtained from the copyright holder —see under the heading 'Submission'), please include a line in the legend to state that: 'This figure has been reproduced with kind permission from [include original publication citation]'.
 
-\begin{figure}[ht]
+\subsection*{Figures}
+
+\begin{figure}[!htp]
 \centering
-\includegraphics{Grassroots_architecture}
+\includegraphics[width=\textwidth]{Grassroots_architecture}
 \caption{\label{fig:client_view}A user's view of how a distributed service is called is shown in (a) with the actual cross-server communication shown in (b).}
 \end{figure}
 

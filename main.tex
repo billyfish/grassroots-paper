@@ -10,7 +10,7 @@
 % For more detailed article preparation guidelines, please see:
 % http://f1000research.com/author-guidelines and http://f1000research.com/data-preparation
 
-\documentclass[9pt,a4paper]{extarticle}
+\documentclass[12pt,a4paper]{extarticle}
 \usepackage{f1000_styles}
 
 \usepackage{listings}
@@ -21,6 +21,7 @@
 \usepackage{float}
 \usepackage{nameref}
 \usepackage{hyperref}
+\usepackage{subcaption}
 
 \usepackage{enumitem}
 \setlist[enumerate,1]{start=0} % only outer nesting level
@@ -46,10 +47,10 @@
 \author[1]{Simon Tyrrell*}
 \author[1]{Xingdong Bian}
 \author[1]{Daniel Olvera}
+\author[1]{Fred Uche}
 \author[3]{Andrew Riche}
 \author[4]{Luzie Wingen}
 \author[2]{Paul A. Wilkinson}
-\author[2]{Keith J. Edwards}
 \author[4]{Simon Griffiths}
 \author[3]{Malcolm Hawkesford}
 \author[1]{Robert P. Davey}
@@ -84,11 +85,11 @@ UK.}
 \begin{abstract}
 
 Since the dawn of the modern internet which allowed the transmission of more extensive content, scientific analysis software has been able to be run as online services.
-These can range from tools such as BLAST\cite{Camacho:2008}, SwissDock\cite{Grosdidier2011SwissDock}, and now a true multitude of others.
+These can range from tools such as BLAST\cite{Camacho:2008}, SwissDock\cite{Grosdidier2011SwissDock} to a true multitude of others.
 Historically, these would have been "single use" tools, providing access to one tool or package of tools in order to analyse some small datasets.
 Given the subsequent explosion of datasets and new tools to analyse them, many scientific services are now provided on high-powered web servers and many offer application programming interfaces (APIs) to allow them to be called programmatically rather than requiring human interaction.
 
-Similarly, as an increasing number of online services become available and popular, the issue of how to share data between the services becomes prevalent.
+Similarly, as an increasing number of online services become available and popular, the issue of how to share data between these services becomes prevalent.
 The data that these services input and output can be in differing data formats and be difficult and time-consuming for a user to reconcile the results together.
 These are the primary issues that we are developing the Grassroots infrastructure to solve.
 
@@ -112,16 +113,21 @@ If multiple servers offer similar services on differing sets of data, \textit{e.
 Finally, data that these analyses are based on is commonly unstructured or non-standard, requiring extensive manual curation.
 With the data-generative approaches that are increasingly common in modern life science research, it is vital that the data and metadata produced by these efforts can be shared and reused.
 
+
+
+
 The Grassroots Infrastructure project aims to create an easily-deployable suite of computing middleware tools to help users and developers gain access to standardised crop data through infrastructure that can easily be interconnected.
-Grassroots wraps up industry-standard tools along with our own custom open-source software to give a consistent API that can be federated with others in terms of both data and services.
-This means institutions and groups can deploy a simple lightweight software suite, locally or as a virtual machine, to expose institutional data, connect up any existing data services, and federate their instance of Grassroots with other remote instances.
+Grassroots wraps up both industry-standard tools along with our own custom open source software to give a consistent API that to allow the federation of both data and services.
+This means that institutions and groups can deploy a simple lightweight software suite, locally or as a virtual machine, to expose institutional data, connect any existing data services, and federate their Grassroots instance with other remote instances.
 
-One of the major aims of the Grassroots Infrastructure is to allow users to share the wheat data generated through the UK wheat improvement programmes, Designing Future Wheat (DFW) and its successor Delivering Sustainable Wheat (DSW), although it is by no means organism-specific.
+One of the major aims of the Grassroots Infrastructure is to allow users to share the wheat data generated through the UK wheat improvement programmes, Designing Future Wheat (DFW), and its successor, Delivering Sustainable Wheat (DSW), although Grassroots is by no means organism-specific being used with other crops such as soya, legumes, \textit{etc}.
 
-These programmes, including the tools and services developed within such as Grassroots, aims to do this by linking data and services together as much as possible. Similar to the cohesion between web pages, images, maps, \textit{etc.} as part of a Google search, the Grassroots system attempts to link together data so that, for a given pathogen for example, any data from samples are linked with any academic papers into the topic, \textit{etc.}
+The DFW/DSW programme, including the tools and services developed within such as Grassroots, aims to do this by linking data and services together as much as possible. Similar to the cohesion between web pages, images, maps, \textit{etc}. as part of a Google search, the Grassroots system attempts to link together data so that, for a given pathogen for example, any data from samples are linked with any academic papers into the topic, \textit{etc}.
 This is achieved by using Linked Data and JSON-LD with well-documented ontologies and schemas allowing data to be marked up for reuse as effectively as possible.
 
 Something about existing solutions (BreedBase, Sol, CropStore, Germinate)
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% Currently our mark up is for the pathogenomics and hopefully %%%%
@@ -167,22 +173,24 @@ Something about existing solutions (BreedBase, Sol, CropStore, Germinate)
 \subsection*{Implementation}
 %For software tool papers, this section should address how the tool works and any relevant technical details required for implementation of the tool by other developers.  
 
-The Grassroots infrastructure works as a server-client application typical of existing web services. 
-Rather than working as a centralised system, the Grassroots infrastructure uses a distributed architecture where each server is a node that can be connected together and share their data and services. 
-From a user's point of view, these shared resources appear as they all exist upon the server that the user is connected to.
-In essence, the user can see all of the resources from all of the Grassroots servers in one single place.
+The Grassroots infrastructure works as a typical server-client application comprising existing web services. 
+Rather than being restricted to working as a single centralised system, the Grassroots infrastructure is able to use a distributed architecture where each server is a node that can be connected together, or federated, and share their data and services. 
+From a user's point of view, these shared resources appear as a single collection of resources that they can access regardless or whether they are distributed or not. In essence, the user can see all of the resources from all of the Grassroots servers in one single place.
 
 There are two parts to the Grassroots infrastructure; the schema that defines the messages that are used for the server-client and server-server communication, and the software tools constituting the server, services, support libraries and clients.
 
 All of the server-client and cross-server communication is performed using JSON\cite{JSON} messages that conform to the Grassroots schema. 
-These messages form a specification and any software tools that are able to interpret these messages correctly can be used. 
-This is analogous to the consumption of HTML content by a variety of different web browsers, servers, command line tools, \textit{etc.} 
-These messages describes services, parameters and results of running services and are fully self-describing so that no prior knowledge of the service is needed by the receiver of these messages to be able to understand all of the information described in these messages. 
+These messages form a specification that allows the various components within Grassroots to be seamlessly integrated. 
+
+This is analogous to the consumption of HTML content by a variety of different web browsers, servers, command line tools, \textit{etc}. 
+The content of these messages has rich metadata that describes the available services, their parameters, information to users on what the services do, the types of data that they consume and produce amongst others. 
+Each parameter
+These service messages are fully self-describing so that no prior knowledge of the service is needed by the receiver of these messages to be able to understand what they do, all of the necessary information is described in these messages. 
 
 The key part of being able to use the Grassroots architecture is being able to receive and respond to these JSON messages, so software can be implemented in any programming language or using any compliant tools.
-The software libraries that are currently within the Grassroots infrastructure are mainly written in C/C++ or Java for the server-based tools and Python, HTML/Javascript and C/C++ for the client applications.
+The software libraries that are currently within the Grassroots infrastructure are mainly written in C/C++ or Java for the server-based tools and Python, HTML/Javascript, Flutter and C/C++ for the client applications and the default web-based front end which uses the Django framework.
 
-A schematic of the Grassroots architecture is shown in Figure \ref{fig:httd_grassroots}. The currently available Grassroots server software can be easily integrated into an Apache HTTP Server (httpd)\cite{httpd} by loading a custom Grassroots httpd module and configuration file into httpd. By using httpd, the server can take advantage of all of the functionality and security that httpd provides.  
+A schematic of the Grassroots architecture is shown in Figure \ref{fig:httd_grassroots}. The currently available Grassroots server software is easily integrated into an Apache HTTP Server (httpd)\cite{httpd} by loading our custom Grassroots httpd module and configuration file into httpd. By using httpd, the server can take advantage of all of the functionality and security that httpd provides.  
 
 The next section of the schematic shows the set of libraries that give much of the underlying functionality of the Grassroots infrastructure. 
 
@@ -193,13 +201,13 @@ Grassroots has full support for running jobs on High Performance Computing (HPC)
 
 The code modules that provide the scientific analysis are called services.
 Although the actual functionality provided by each service can vary, \textit{e.g.} scientific analysis, text mining, similarity searching, \textit{etc.}, the methods of transmitting the required information to run each service and returning their results can be standardised through these JSON fragments. 
-Each service conforms to the same API, which we call\ the Grassroots API, which allows the system to query its capabilities such as \textit{e.g.} its name, description, an optional web page describing the service in greater depth, its parameters, which also have names, descriptions, default values, \textit{etc.}, run the service, query the status of its jobs, \textit{etc.} 
+Each service conforms to the same API, which we call the Grassroots API, which allows the system to query its capabilities such as \textit{e.g.} its name, description, an optional web page describing the service in greater depth, its parameters, which also have names, descriptions, default values, \textit{etc.}, run the service, query the status of its jobs, \textit{etc.} 
 So any code that conforms to this API can be added to the system as a service.
 
 
 \subsection*{Services}
 
-Services can run in two different ways. 
+Services can be run in two different ways. 
 The first mode is synchronously where the service runs to completion before returning any results to the user. 
 All of the resources that the service requires to run the job can be released as it sends the response back.
 The second approach is that a service can be run asynchronously where it starts its work and returns immediately. 
@@ -207,10 +215,11 @@ The job then continues and the user can send a message to periodically check whe
 With this approach any required resources need to be accessible between different requests. 
 Given that httpd can run as a multi-threaded and/or multi-process system, any data that needs to be persistent, \textit{i.e.} stored between requests, has to be adaptable to any httpd runtime configuration.
 
-So the Grassroots system has an interface for interacting with asynchronous jobs which is a module called JobsManager which deals with sharing persistent data between requests. 
-There are currently two implementations of this. The first is for Apache httpd web server in a module called the APRJobsManager, since it uses the Apache Portable Runtime (APR) libraries. 
-The second instance uses the Grassroots MongoDB libraries to store the job details in a MongoDB database.
-All of the needed data to be able to recreate and access the job between processes and/or threads is stored in this module.
+Grassroots has an interface for interacting with asynchronous jobs which is a module called \textit{Jobs Manager} which deals with sharing persistent data between requests. 
+There are currently two implementations of this. The first is for Apache httpd web server in a module called the \textit{APR Jobs Manager}, since it uses the Apache Portable Runtime (APR) libraries. 
+The second instance, \textit{MongoDB Jobs Manager} uses the Grassroots MongoDB libraries to store the job details in a MongoDB database between requests.
+All of the needed data to be able to recreate and access the job between processes and/or threads is stored in one of these Jobs Manager modules. 
+The default option is to use the MongoDB Jobs Manager.
 
 The available JSON keys for describing parameters are show in tables \ref{tab:parameter} and \ref{tab:parameter_types}.
 
@@ -219,17 +228,17 @@ The available JSON keys for describing parameters are show in tables \ref{tab:pa
 
 In this way, any changes to a service such as adding a parameter or changing default values need only be made by the service, and the server and the client will automatically take these amendments into account.
 
-One of the goals of the Grassroots architecture is to allow users to use distributed services seamlessly.
+One of the goals of the Grassroots architecture is to allow users to use distributed services seamlessly without needed to 
 Grassroots-enabled servers can be connected together to allow users access to all of the combined services, regardless of which server they connect to. 
 
 As well as connected Grassroots servers being able to combine their list of services, the individual services themselves can also be integrated. 
-For example, separate servers can run similar services which access differing datasets and these two services can be passenger presented to user as a single service with access to the combined list of datasets as shown in Figure \ref{fig:client_view}. 
-This means that the user only has to enter their chosen parameters once rather than having to go each instance of the service individually and duplicate their parameter choices. 
+For example, separate servers can run similar services which access differing datasets and these two services can be presented to user as a single service with access to the combined list of datasets as shown in Figure \ref{fig:client_view}. 
+This means that the user only has to enter their chosen parameters once rather than having to go to each instance of the service individually and duplicate their parameter choices. 
 
 \subsubsection*{Data}
 
-As well as connecting both internal and external services together, the Grassroots architecture also can be use federated data. Data access, such as reading and writing data, is abstracted and can be located on an accessible filesystem or an HTTP(S) URI. 
-There is also partial support for accessing resources located on a Dropbox\cite{Dropbox} share and within Integrated Rule-Oriented Data System (iRODS)\cite{2007AGUFMIN13B1214R}. iRODS is a data management system that virtualizes where data is stored and allows the adding of metadata key-value pairs to any of the objects stored within it. It also allows different remote iRODS storage areas to federated together so that a user can access all joined areas transparently.
+As well as connecting both internal and external services together, the Grassroots architecture can also use federated data. Data access, such as reading and writing data, is abstracted and can be located on an accessible filesystem or an HTTP(S) URI. 
+There is also partial support for accessing resources located on a Dropbox\cite{Dropbox} share or within the Integrated Rule-Oriented Data System (iRODS)\cite{2007AGUFMIN13B1214R}. iRODS is a data management system that virtualizes where data is stored and allows the adding of metadata key-value pairs to any of the objects stored within it. It also allows different remote iRODS storage areas to federated together so that a user can access all joined areas transparently.
 
 
 \subsubsection*{Service creation}
@@ -297,7 +306,9 @@ This is accessible from results of a BLAST search when using the web-based clien
 
 \item [Gene Sequence to Family] 
 
+\item [Search]
 
+\item [MARTi]
 
 
 \end{description}
@@ -308,14 +319,52 @@ This is accessible from results of a BLAST search when using the web-based clien
 
 \subsubsection*{Exporting data}
 
-BrAPI, Frictonless Data, Grassroots
+
+One of the major goals of Grassroots is to share services and data in a FAIR\cite{fair_data} way. 
+To that end, we support a variety of formats and API endpoints for exporting data.
 
 
+To ensure as much reuse as possible, we have three different APIs for exposing the data stored within the Field Trial services. 
+For other developers and services, the standard Grassroots API offers the ability for full integration. 
+We also have partial support for BrAPI and work to increase the level of support for this is ongoing. 
+Whilst both of these are useful for developers, they are of less use for standard users so we also offer a full export of any of the Studies as a Frictionless Data Package \cite {frictionless}. 
+These contain all of the metadata for the Study, the Field Trial and Programme that it is a part of as well as all of the Plot data as a single rich data file. 
+To allow easy access to this data, we have developed an open source tool \cite{grassroots_fd_tool} to extract this data into common file formats such as HTML or Markdown for general data and CSV files for tabular data. 
+
+
+
+All of the data is available in our fully open Grassroots format which uses JSON.
+Each of the services also have various formats where appropriate.
+Within the Field Trials service, all of the data is available as 
+
+
+
+\begin{description}
+
+\item[Grassroots] As with any data within Grassroots, it can be exported in Grassroots' open JSON-based format.
+
+\item[BrAPI] The Breeding API (BrAPI) Project is an effort to enable interoperability among agricultural databases and tools \cite{brapi}. 
+BrAPI is a standardized RESTful web service API specification for exchanging scientific data. 
+Grassroots has partial BrAPI support \cite{grassroots_brapi} and the list of supported attributes for Programmes, Trials, Studies and Locations are detailed in the links in the Compatibility documentation at https://github.com/TGAC/grassroots-brapi-module.
+
+\item[Frictionless Data] Frictionless Data is a progressive open-source framework for building data infrastructure – data management, data integration, data flows, \textit{etc}. \cite{frictionless}. Each Study, along with its parent field trial, programme, location and plot data is available as Frictionless Data Packages.
+
+
+\item[CSV] For a given study, the plot data is available as a CSV file for ease of use with other systems.
+
+\item[LaTeX] One of the advantages of having a data management system like Grassroots for Field Trial data is that it can automatically interrogate the data and perform automated tasks on it. 
+One of these that Grassroots does is to produce handbooks detailing all of the data and metadata for a given Study and its plots into documents for either editing or printing. 
+In this case, a LaTeX document is produced
+
+\item[PDF] With the LaTeX file described above, it is a trivial task to convert this into a PDF file and Grassroots does this too. 
+
+
+\end{description}
 
 
 \subsubsection*{Ontologies}
 
-New ontology terms
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -334,12 +383,14 @@ The JSON services currently available all connect to web-based search engines as
 
 \subsubsection*{Searching}
 
-A Grassroots system can receive a request to run some of its service with a given set of parameters or it can run a global keyword search, analogous to the Google search box. 
+A Grassroots system can receive a request to run some of its services with a given set of parameters or it can run a global keyword search, analogous to the Google search box. 
 Given the disparate nature of the various data and services within a Grassroots system, a flexible architecture for searching was a vital requirement for usability. 
-Therefore we have an open search service \cite {grassroots_search} available at \href{https://grassroots.tools/service/search}{https://grassroots.tools/service/search} that is built upon a custom Lucene-based \cite {lucene} search engine that we have developed \cite {grassroots_lucene}. 
-Since the other Grassroots services can be dealing with any type of data and the Grassroots system has to query them for their capabilities, the services themselves push the JSON-based description of their data and capabilities to the search service, which parses this description to update its indexes accordingly.
-This search is faceted allowing for searching for specific datatypes and are shown in table \ref{tab:search_facets}. As well as specific datatypes, Services can also be indexed as being able to be run on datasets that match a given given query with the appropriate parameters set accordingly.
-For example, a search on "Paragon" would produce a match for the Grassroots BLAST service that has a Paragon sequence available and clicking on that result takes you to the BLAST service page with the Paragon database selected.
+Therefore, we have an open search service \cite {grassroots_search} available at \href{https://grassroots.tools/service/search}{https://grassroots.tools/service/search} that is built upon a custom Lucene-based \cite {lucene} search engine that we have developed \cite {grassroots_lucene}. 
+Due to its modular nature, with each Grassroots service being self-contained and fully self-describing, the search engine does not have any prior knowledge of the types of data that the service stores. 
+This means that to index the service's data and search it effectively, Grassroots has a search API where each service pushes a standardized description of their data and capabilities to the search service, which parses this description to update its indexes accordingly.
+This search is faceted, allowing for searching for specific datatypes, and these are shown in table \ref{tab:search_facets}. 
+In addition to specific datatypes, services can also be indexed as able to run on datasets that match a given query with the appropriate parameters set accordingly.
+For example, a search on "Paragon" would produce a match for the Grassroots BLAST service that has a Paragon sequence available and clicking on that result takes you to the BLAST service with the Paragon database selected.
 The search service also weights certain fields to be considered more important than others.
 For instance, when searching a set of papers a higher score would be given to keyword matches in the title of the paper than in the remainder of the paper.
 Similarly a match in the abstract or conclusions would give a higher score than one in the main body of the paper.
@@ -347,7 +398,7 @@ Each datatype knows all of its fields and automatically sets the weighting facto
 
 
 % TODO: describe ontology support and linked data
-
+O
 \subsection*{Operation}
 %This part of the methods should include the minimal system requirements needed to run the software and an overview of the workflow for the tool for users of the tool.
 
@@ -357,12 +408,15 @@ Currently there is a Grassroots module to run a Grassroots server under httpd 2.
 
 For advanced users to submit requests, any tool that can submit the JSON-based messages using an HTTP(S) protocol will suffice such as \textit{e.g.} curl\cite{curl}, \textit{etc.} 
 
-A web-based client is also available which uses Java\cite{Java} and javascript. 
+
+
+
+A web-based client is also available which uses Java\cite{Java} and JavaScript. 
 There is also a Qt-based\cite{qt} desktop client is also provided for users. 
 Both of these build the entire user interface (UI) dynamically purely from the service descriptions received from a Grassroots server, choosing appropriate parameter editors depending upon the datatypes of the services' parameters.
 Due to the Grassroots schema being richly described, the UIs are built fully from these with no prior knowledge of any of the services required. 
 
-The initial versions of the Grassroots system and the Qt-based desktop client are available for Linux, however since all of the platform-specific code is contained within three small modules, porting to other platforms is trivial and versions for Windows and OSX will follow shortly.
+The Grassroots system and the Qt-based desktop client mostly use platform-agnostic code with all of the platform-specific code contained within three small modules. It is currently  available for Linux, Windows and MacOS.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% TODO: DRMAA %%%
@@ -419,21 +473,22 @@ The phenotype data view is represented by an interactive table using DataTable, 
 
 \subsection*{Field Trial services}
 
-Although Grassroots is technically discipline-agnostic, as part of the DFW programme a major focus of our work is research about wheat. 
+Although Grassroots is technically discipline-agnostic, as part of the DFW/DSW programmes a major focus of our work is research about wheat. 
 So as well as more generic services such as those listed above, we have many wheat-specific services and the major one of these is concerned with Field Trials.
-Field Trials are plant-based phenotyping experiments and the Field Trial services comprise of a suit of packages for submitting, searching and exposing the data and metadata associated with these. 
+Field Trials are plant-based phenotyping experiments and the Field Trial services comprise of a suite of packages for submitting, searching and exposing the data and metadata associated with these. 
 
 A key goal of the Field Trials service is to not silo the data but to make the data as FAIR\cite{fair_data} as possible. 
 As such, as many existing ontologies as possible are used to store and expose the data. 
-These vary from generic ontologies such as schema.org along with domain-specific ontologies such as the crop ontology, the Plant Experimental Conditions Ontology (PECO) \cite{peco}, the Experimental Factor Ontology (EFO) \cite{efo}, the Environment Ontology (ENVO) \cite{envo}, the Agronomy Ontology (AGRO) \cite{agro} and the NCI Thesaurus Ontology (NCIT) \cite{ncit} amongst others. 
+These vary from generic ontologies such as schema.org along with domain-specific ontologies such as the Crop Ontology (CO) \cite{co}, the Plant Experimental Conditions Ontology (PECO) \cite{peco}, the Experimental Factor Ontology (EFO) \cite{efo}, the Environment Ontology (ENVO) \cite{envo}, the Agronomy Ontology (AGRO) \cite{agro} and the NCI Thesaurus Ontology (NCIT) \cite{ncit} amongst others. 
 
 The architecture closely follows a hierarchy similar to the one defined by the Breeding API (BrAPI) \cite{brapi} although in some cases our datatypes have a number of extra pieces of information or do not support certain fields. 
-A Study is a phenotyping experiment that takes place at a location such as field or greenhouse. 
+A Study is a phenotyping experiment that takes place at a location such as a field or greenhouse. 
 A Field Trial consists one or more Studies that are related and the highest level object is a Programme, which is an organization that is running one or more Field Trials. 
 
-Studies are described as a collection of Plots that in turn can contain one or more Racks where a seed has been planted. 
-The layout can be specified as a grid-based layout with a certain number of rows and columns with each of these areas being called Plots. 
-Each Plot has its length and width specified and the Plots can be grouped into blocks with the gaps between both Plots and blocks of Plots also able to be specified. 
+Studies are richly-described and have a wide variety of metadata as described in table \ref{tab:study_metadata}.
+
+The layout for each Study is specified as a grid-based layout with a certain number of rows and columns, with each of these areas being called Plots. 
+Each Plot has its length and width specified and the Plots can be grouped into blocks with the gaps between both Plots and blocks of Plots also able to be set out. 
 Each of these Plots can also be further subdivided into sections called Racks.
 Racks also have a free text field for adding any comments or notes along with the option to have an image file associated with them.
 
@@ -448,30 +503,71 @@ For measuring phenotypic values, we use the approach defined by the Crop Ontolog
 Each of these Measured Variable definitions has an associated Scale Class that details their datatypes \cite{co_scales} and detailed in table \ref{tab:co_scale_classes}.
 The Crop Ontology has defined 519 of these for wheat\cite{co_variables} and work at Rothamsted has defined another 519 Measured Variable definitions, following the same standards, that are stored in the Field Trials service which will be submitted back to the Crop Ontology for community usage.
 Each Rack can then have one or more values assigned for any of these Measured Variables. 
-These values can be designated as being raw or corrected values along with optionally having a date, or range of dates, for when these values were taken. 
+These values can be designated as being raw or corrected values. These observations can also optionally have user notes stored as well as having a date, or range of dates, for when these values were taken.
 This allows the possibility of generating a time series for the given entries.
 
 As was previously mentioned, each Measured Variable has an associated scale class and for phenotypic values calculated for numeric Measured Variables, rudimentary statistics are automatically generated such as the minimum, maximum, arithmetic mean, variance and standard deviation values. 
-These allow users to easily identify outliers and other Racks/Plots of interest.
+Having this information means that we are able to automatically generate heatmaps of these these values and these allow users to easily identify outliers and other Racks/Plots of interest. 
 
-To ensure as much reuse as possible, we have three different APIs for exposing the data stored within the Field Trial services. 
-For other developers and services, the standard Grassroots API offers the ability for full integration. 
-We also have partial support for BrAPI and work to increase the level of support for this is ongoing. 
-Whilst both of these are useful for developers, they are of less use for standard users so we also offer a full export of any of the Studies as a Frictionless Data Package \cite {frictionless}. 
-These contain all of the metadata for the Study, the Field Trial and Programme that it is a part of as well as all of the Plot data as a single rich data file. 
-To allow easy access to this data, we have developed an open source tool \cite{grassroots_fd_tool} to extract this data into common file formats such as HTML or Markdown for general data and CSV files for tabular data. 
-As well as this, the CSV file detailing the plots for any given study is available as a download too. 
 The seed bank for each of the seeds plated in the racks can be specified and be default this is set to the Germplasm Resources Unit (GRU). 
-Working closely with SeedStor web portal to allow users to get information for the accessions stored in the GRU, we created a web service that allows users of the Field Trials portal to be able to inspect the seed that was planted in any rack and have a link directly to the relevant page of information on the SeedStor port allowing them to access all of its details and order it if required. 
+Working closely with the SeedStor web portal to allow users to get information for the accessions stored in the GRU, we created a web service that allows users of the Field Trials portal to be able to inspect the seed that was planted in any rack and have a link directly to the relevant page of information on the SeedStor port allowing them to access all of its details and order it if required. 
 
 \subsubsection*{Field Trials user portal}
 
-TO DO
+\begin{figure}[!hp]
+\centering
+\includegraphics[width=\textwidth]{map_studies}
+\caption{\label{fig:map_studies}The initial map-based view showing the Field Trials in a map-based view.}
+\end{figure}
+
+    \begin{figure*}
+        \centering
+        \begin{subfigure}[b]{0.475\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{map_studies}
+            \caption[{\label{fig:map_studies}The initial map-based view showing the Field Trials in a map-based view.}]%
+            {{\small Network 1}}    
+            \label{fig:map_studies}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.475\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{study_GPS_plots}
+            \caption[{\label{fig:study_gps_meta}The plots on a  map.}]%
+            {{\small Network 1}}    
+            \label{fig:study_gps_plots}
+        \end{subfigure}
+\end{figure*}
+
+To enable a rich user experience for browsing the Field Trial data, we have created a web-based user portal using both Django and JavaScript. 
+The initial view when entering the portal is map-based with each Study represented individually as pins or as circles of groups of Studies within the map. 
+By selecting a Study, either on the map or in the table below it, you will be taken to the page for that Study.
+On this page it shows the location of the Study within a map-based view similar to before along with all of the metadata for the Study.
+If the Study has the GPS coordinates for its plots, these will be shown in the map as a collection of blue shapes, typically rectangles, for each plot. 
+Clicking on any of these will give a pop-up showing the data and metadata for the relevant plot.
+
+
+If you enable location sharing on your phone, tablet or laptop, your location on the map will update in real-time.
+This allows you to walk around the Study and instantly be able to see which plot you are currently in and the view the data and metadata for it.
+One of the parameters for each of these plots is an optional walking order and this, coupled, with the real-time location updating, allows you to traverse the plots in a given order.
+
+Below the map is a list of the Study's metadata
 
 
 Along with the feature-rich online web-based view to examine Studies, some users may wish to have a more document-centric view of these for storage or printing. 
 To address, Grassroots automatically generates both LaTeX and PDF documents for each Study within the system.  
 
+
+\subsubsection*{Mobile App}
+
+
+In addition to having the web-based portal for accessing the Field Trial data,
+
+The standard way to submit data about the plots within an experiment is by uploading a spreadsheet. 
+This is most commonly done for all Racks/Plots at any given stage, \textit{e.g.} sowing, harvesting, after generating the phenotypic values, \textit{etc}.
+However this approach is not the most ideal when it comes to uploading extra media for the Racks/Plots such as photos, drone images, \textit{etc}.
+So to address this we made a Grassroots mobile app. 
+This is currently available for Android with an iOS version to follow. 
 \section*{Discussion} % Optional - only if novel data or analyses are included
 
 Something about FAIR data etc here
@@ -508,8 +604,10 @@ GRU stuff?
 % recommend using author initials and then stating briefly how they contributed.
 ST wrote the C/C++/Java code for the core libraries, httpd server implementation, services /and the Qt-based client.
 PW set up the SNP and contig services at the University of Bristol.
-DO and XB wrote the Django/Java/javascript code for the web-based client front-ends.
-ST, PW, XB and RD all contributed to defining the JSON schema used for all server-server and server-client communication.
+XB wrote the Java/JavaScript code for the web-based client front-ends.
+DO wrote the Python/Django code and developed the Mobile App.
+SB contributed to the development of the Mobile App.
+ST, PW, XB, DO and RD all contributed to defining the JSON schema used for all server-server and server-client communication.
 All authors contributed to the manuscript.
 
 
@@ -602,7 +700,7 @@ to the user are "Use Raw", "Use Zip" and "Use GZip". \\
 \caption{\label{tab:parameter_types}The available types for parameters.}
 \centering
 \begin{tabularx}{\linewidth}{|l|l|X|}
-\header C ParameterType enum & JSON grassroots\_type & Description \\ 
+\header C Parameter Type enum & JSON grassroots\_type & Description \\ 
 \row PT\_BOOLEAN & \textbf{xsd:boolean} & The parameter can be true or false. \\ 
 \row PT\_SIGNED\_INT & \textbf{params:signed\_integer} & The parameter is an integer. \\ 
 \row PT\_UNSIGNED\_INT & \textbf{params:unsigned\_integer} & The parameter is a non-negative integer. \\ 
@@ -638,12 +736,71 @@ to the user are "Use Raw", "Use Zip" and "Use GZip". \\
 \row Programme & A Programme that consists of one or more Field Trials. \\
 \row Location & A Location where a Study was conducted. \\ 
 \row Measured Variable & A Measured Variable, or Phenotype, is a combined definition of a trait, measurement and unit which has been measured. \\ 
-\row Treatment & A Treatment is a process or substance that is applied to the plants within the plots of a Study.. \\
-\row Publication & A Publication such as journal articles, \textit{etc.} \\
+\row Treatment & A Treatment is a process or substance that is applied to the plants within the plots of a Study. \\
+\row Publication & A Publication such as journal articles, \textit{etc}. \\
+\row MARTi Sample & A MARTi Sample is the metagenomic sample data collected using airborne nanopore sequencing.
 \end{tabularx}
 \end{table}
 
 
+\begin{table}[H]
+\hrule \vspace{0.1cm}
+\caption{\label{tab:study_metadata}Study metadata}
+\centering
+\begin{tabular}{p{0.2\linewidth} | p{0.7\linewidth}}
+\header Name & Description \\ 
+\row Name & A Dataset or Project  available on the DFW Data Portal. \\ 
+\row Field Trial & A Grassroots Service that can be automatically set up and ran on the given search results. \\ 
+\row Sowing year & A Study is an experiment that takes place at a location to measure a variety of Phenotypes. \\ 
+\row Harvest year & A Field Trial consists of one or more experimental Studies. \\ 
+\row Location & A Programme that consists of one or more Field Trials. \\
+\row Description & A Location where a Study was conducted. \\ 
+\row Design & A Measured Variable, or Phenotype, is a combined definition of a trait, measurement and unit which has been measured. \\ 
+\row Growing Conditions & A Treatment is a process or substance that is applied to the plants within the plots of a Study.. \\
+\row Phenotype gathering notes & A Publication; lion such as journal articles, \textit{etc.} \\
+\row Weather & A MARTi Sample is the metagenomic sample data collected using airborne nanopore sequencing. \\
+\row  Field plan changes  & A Dataset or Project  available on the DFW Data Portal. \\ 
+\row  Data not included  & A Grassroots Service that can be automatically set up and ran on the given search results. \\ 
+\row Physical samples collected & A Study is an experiment that takes place at a location to measure a variety of Phenotypes. \\ 
+\row Photo & A Field Trial consists of one or more experimental Studies. \\ 
+\row Image collection notes & A Programme that consists of one or more Field Trials. \\
+\row Crop & A Location where a Study was conducted. \\ 
+\row Previous Crop & A Measured Variable, or Phenotype, is a combined definition of a trait, measurement and unit which has been measured. \\ 
+\row Link & A Treatment is a process or substance that is applied to the plants within the plots of a Study.. \\
+\row Plots GPS & A Publication such as journal articles, \textit{etc}. \\
+\row Plots GPS Notes & A MARTi Sample is the metagenomic sample data collected using airborne nanopore sequencing. \\
+\row Name & A Dataset or Project  available on the DFW Data Portal. \\ 
+\row Field Trial & A Grassroots Service that can be automatically set up and ran on the given search results. \\ 
+\row Sowing year & A Study is an experiment that takes place at a location to measure a variety of Phenotypes. \\ 
+\row Harvest year & A Field Trial consists of one or more experimental Studies. \\ 
+\row Curator name & A Programme that consists of one or more Field Trials. \\
+\row Curator email & A Location where a Study was conducted. \\ 
+\row Curator role & A Measured Variable, or Phenotype, is a combined definition of a trait, measurement and unit which has been measured. \\ 
+\row Curator affiliation & A Treatment is a process or substance that is applied to the plants within the plots of a Study.. \\
+\row Curator OrCID & A Publication such as journal articles, \textit{etc.} \\
+\row Contact name & A MARTi Sample is the metagenomic sample data collected using airborne nanopore sequencing. \\
+\row  Contact email  & A Dataset or Project  available on the DFW Data Portal. \\ 
+\row  Contact role & A Grassroots Service that can be automatically set up and ran on the given search results. \\ 
+\row Contact affiliation & A Study is an experiment that takes place at a location to measure a variety of Phenotypes. \\ 
+\row  Contact OrCID  & A Field Trial consists of one or more experimental Studies. \\ 
+\row Aspect & A Programme that consists of one or more Field Trials. \\
+\row Slope & A Location where a Study was conducted. \\ 
+\row Horizontal plot gap & A Measured Variable, or Phenotype, is a combined definition of a trait, measurement and unit which has been measured. \\ 
+\row Vertical plot gap & A Treatment is a process or substance that is applied to the plants within the plots of a Study.. \\
+\row  Plot rows per block  & A Publication such as journal articles, \textit{etc.} \\
+\row Plot columns per block & A MARTi Sample is the metagenomic sample data collected using airborne nanopore sequencing. \\
+\row Horizontal plot block gap & A Programme that consists of one or more Field Trials. \\
+\row Vertical plot block gap & A Location where a Study was conducted. \\ 
+\row Number of plot rows & A Measured Variable, or Phenotype, is a combined definition of a trait, measurement and unit which has been measured. \\ 
+\row Number of plot columns & A Treatment is a process or substance that is applied to the plants within the plots of a Study.. \\
+\row Number of replicates & A Publication such as journal articles, \textit{etc.} \\
+\row Plot width & A MARTi Sample is the metagenomic sample data collected using airborne nanopore sequencing. \\
+\row  Plot length  & A Dataset or Project  available on the DFW Data Portal. \\ 
+\row  Contributors & A Grassroots Service that can be automatically set up and \\
+\row Measured Variables & A Publication such as journal articles, \textit{etc.} \\
+\row Treatment Factors & A MARTi Sample is the metagenomic sample data collected using airborne nanopore sequencing.
+\end{tabular}
+\end{table}
 
 
 \begin{table}[H]
